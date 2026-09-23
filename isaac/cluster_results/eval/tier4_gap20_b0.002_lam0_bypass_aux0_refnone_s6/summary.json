@@ -1,0 +1,1 @@
+{"model": "tier4_gap20_b0.002_lam0_bypass_aux0_refnone_s6", "success": 0.4921875, "side": 1.0, "slot": 0.5, "err": 4.9678067676723, "episodes": 128, "cl_HC_gap1": 0.0, "cl_suff_b1_gap1": 0.0, "cl_suff_b2_gap1": 0.0, "body_sep_b2_gap1_cm": 0.253668874502182, "cl_HC_gap2": 0.0, "cl_suff_b1_gap2": 0.0, "cl_suff_b2_gap2": 0.0, "body_sep_b2_gap2_cm": 0.25256142020225525}

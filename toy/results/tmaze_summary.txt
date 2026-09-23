@@ -1,0 +1,24 @@
+ R   L variant    lam n | suff | corridor H(C|O) [log2 R] (suff seeds) | surplus H(C|Gam,O) | err junction (all)
+ 2   5 diacritic  0   8 | 8/8 |   1.25 [1.00]  |  0.25  |  0.00
+ 2   5 diacritic  1   8 | 8/8 |   1.12 [1.00]  |  0.12  |  0.00
+ 2   5 scaffold   1   8 | 8/8 |   1.17 [1.00]  |  0.18  |  0.00
+ 2  10 diacritic  0   8 | 8/8 |   1.19 [1.00]  |  0.19  |  0.00
+ 2  10 diacritic  1   8 | 8/8 |   1.50 [1.00]  |  0.50  |  0.00
+ 2  10 scaffold   1   8 | 8/8 |   1.00 [1.00]  |  0.00  |  0.00
+ 2  20 diacritic  0   8 | 7/8 |   1.00 [1.00]  |  0.00  |  0.06
+ 2  20 diacritic  1   8 | 8/8 |   1.38 [1.00]  |  0.38  |  0.00
+ 2  20 scaffold   1   8 | 8/8 |   1.06 [1.00]  |  0.06  |  0.00
+ 2  40 diacritic  0   8 | 3/8 |   1.00 [1.00]  |  0.00  |  0.31
+ 2  40 diacritic  1   8 | 5/8 |   1.10 [1.00]  |  0.10  |  0.19
+ 2  40 scaffold   1   8 | 8/8 |   1.19 [1.00]  |  0.19  |  0.00
+ 2  80 diacritic  0   8 | 5/8 |   1.00 [1.00]  |  0.00  |  0.19
+ 2  80 diacritic  1   8 | 6/8 |   1.17 [1.00]  |  0.17  |  0.12
+ 2  80 scaffold   1   8 | 6/8 |   1.08 [1.00]  |  0.08  |  0.12
+ 4  10 diacritic  0   8 | 4/8 |   2.00 [2.00]  |  0.00  |  0.12
+ 4  40 diacritic  0   8 | 0/8 |   1.18 [2.00]  |  0.03  |  0.56
+
+logistic slope of P(sufficient) on corridor length L:
+  R=2 diacritic  lam=0: slope -0.033/step  (n=40)
+  R=2 diacritic  lam=1: slope -0.034/step  (n=40)
+  R=2 scaffold   lam=1: slope -0.302/step  (n=40)
+  R=4 diacritic  lam=0: slope -0.419/step  (n=16)

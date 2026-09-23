@@ -1,0 +1,1 @@
+{"model": "pI_M4_b0_lam0_diacritic_s5", "success": 0.828125, "side": 1.0, "slot": 1.0, "err": 1.1503092018756433, "episodes": 128, "cl_HC_gap1": 1.9794156836580905, "cl_suff_b1_gap1": 1.0, "cl_suff_b2_gap1": 1.0, "body_sep_b2_gap1_cm": 0.24978399276733398, "cl_HC_gap2": 2.170570488296569, "cl_suff_b1_gap2": 1.0, "cl_suff_b2_gap2": 1.0, "body_sep_b2_gap2_cm": 0.30053582787513733}

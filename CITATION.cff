@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use the solver or the measurement protocol, please cite the paper below."
+type: software
+title: "DIACRITIC: minimal recurrent behavioral memory - solver, benchmarks and diagnostics"
+authors:
+  - family-names: Li
+    given-names: Xianyao
+repository-code: "https://github.com/XianyaoLi/DIACRITIC"
+license: MIT
+preferred-citation:
+  type: article
+  title: "Minimal Recurrent Behavioral Memory for Imitation under Partial Observability"
+  authors:
+    - family-names: Li
+      given-names: Xianyao
+    - family-names: Xu
+      given-names: Fang
+    - family-names: Min
+      given-names: Rui
+    - family-names: Tian
+      given-names: Ruitong
+    - family-names: Du
+      given-names: Jing
+  year: 2026
+  journal: "arXiv preprint"
+  identifiers:
+    - type: other
+      value: "arXiv:2609.25757"
+  url: "https://arxiv.org/abs/2609.25757"

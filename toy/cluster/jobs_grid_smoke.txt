@@ -1,0 +1,3 @@
+grid_smoke 16 2 2 1 3 6 diacritic 0.03 0 0 300 0 0.0003 0 0
+grid_smoke 16 2 2 3 3 6 mik 0.03 0 0 300 0 0.0003 0 0
+grid_smoke 16 2 2 1 3 6 sysid 0.03 0 0 300 0 0.0003 0 0

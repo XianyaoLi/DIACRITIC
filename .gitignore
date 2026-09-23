@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.venv/
+external/MIKASA-Base/
+external/MIKASA-Robo/
+results_md/*.md
+!results_md/README.md
+*.pt
+*.npz

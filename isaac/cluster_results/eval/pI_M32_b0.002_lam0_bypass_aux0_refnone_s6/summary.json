@@ -1,0 +1,1 @@
+{"model": "pI_M32_b0.002_lam0_bypass_aux0_refnone_s6", "success": 0.59375, "side": 0.96875, "slot": 0.6015625, "err": 5.0159419641204295, "episodes": 128, "cl_HC_gap1": 0.0, "cl_suff_b1_gap1": 0.0, "cl_suff_b2_gap1": 0.0, "body_sep_b2_gap1_cm": 0.23940841853618622, "cl_HC_gap2": 0.0, "cl_suff_b1_gap2": 0.0, "cl_suff_b2_gap2": 0.0, "body_sep_b2_gap2_cm": 0.15178801119327545}

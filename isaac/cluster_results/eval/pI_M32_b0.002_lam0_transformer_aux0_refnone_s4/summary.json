@@ -1,0 +1,1 @@
+{"model": "pI_M32_b0.002_lam0_transformer_aux0_refnone_s4", "success": 1.0, "side": 1.0, "slot": 1.0, "err": 0.43069256043963833, "episodes": 128, "cl_HC_gap1": 0.0, "cl_suff_b1_gap1": 0.0, "cl_suff_b2_gap1": 0.0, "body_sep_b2_gap1_cm": 0.2789027690887451, "cl_HC_gap2": 0.0, "cl_suff_b1_gap2": 0.0, "cl_suff_b2_gap2": 0.0, "body_sep_b2_gap2_cm": 0.06939764320850372}
