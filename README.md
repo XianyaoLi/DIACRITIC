@@ -109,11 +109,32 @@ python toy/grid_horizon_law.py toy/results/grid_horizon.jsonl toy/results/grid_l
   Section 3.
 * `-R` = imitation + rate term; `-RF` = + behavioral future sufficiency; `scaffold-RF`, `distill:forecast`
   (task-informed), `generic` (event-agnostic) are the supervision variants of Appendix B.2.
+* Normalization statistics in `isaac/train_diacritic.py` (per-dimension mean and standard deviation of observations
+  and expert actions) are computed over all recorded episodes of a dataset before the train / held-out split (the
+  default `--norm_fit all`, used for every reported run). The teacher-forced sufficiency scores and rates written
+  by the training script are likewise computed over all recorded episodes; only the action error and class error
+  use the held-out indices. Closed-loop evaluation and the independent re-recordings reuse the statistics stored
+  with each model. `--norm_fit train` fits the statistics on the training split alone (the control reported in
+  Appendix B.2). That control passes the full gate on 34/40 seeds against 36/40 for the reported runs, with the same
+  first-gap rates; its ledgers are `isaac/cluster_results/results/normctl.jsonl` and `rep_normctl_*.jsonl`, and its
+  closed-loop summaries are in `isaac/cluster_results/eval_normctl/`.
+* The `sufficient` field written by `isaac/eval_offline.py` is the relaxed gate of Appendix B.5: for A'-family
+  datasets, phase means of `S_Gamma` in the second gap and `S_G` at placement; for Task A, placement only. It is not
+  the acceptance rule of the paper. The full per-step gate is recomputed from the ledgers by
+  `isaac/analysis/full_gate.py` and the report scripts; use those for any count compared with the main text.
+* `isaac/eval_offline.py` re-evaluates low-dimensional-observation models only. Pixel policies take an
+  (image, low-dimensional) input pair; their teacher-forced scores come from the evaluation built into
+  `isaac/train_diacritic.py` at the end of training, and their closed-loop success from `isaac/aprime_env.py`
+  (via `isaac/eval_models.sh`) with `--pixel_policy --cam_res 128` passed explicitly.
 
 ## Reproduction scope and entry points
 
 - `report_supervision.py` and `full_gate.py` report the current full-gate comparisons. Printed **relaxed gate**
   columns are diagnostic comparisons, not the acceptance rule used for the main learning tables.
+  `python isaac/analysis/full_gate.py --training-only` counts each trained model once (no `rep_*` / `tf_*`
+  re-evaluation ledgers, no timing runs) and reproduces the totals of Appendix B.5: 1,912 A'-family training runs,
+  706 relaxed-gate and 720 full-gate passes, the 80 full-gate-only runs all on the weighing task. The normalization
+  control ledgers are tabulated but excluded from every total; `ruleB_baseline.py` skips them as well.
 - `report_evidence.py` and `report_readout_sysid.py` include explicitly labelled phase-specific or stricter gates.
   Their counts must not be substituted for main-text counts without matching the gate and occupancy.
 - `report_audit_external.py` reports injected-leak performance and the exploratory flag B;

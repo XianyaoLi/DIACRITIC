@@ -3,12 +3,17 @@ Relaxed = mean S_Gamma over gap2 > 0.9 and mean S_G over place > 0.9.
 The paper's FULL gate checks S_Gamma at every positive-requirement gap step and S_G at the first
 positive-requirement grasp and place decisions. The stricter gate checks all such episode/decision steps.
 Passing a threshold is an empirical diagnostic, not a certificate of exact zero distortion.
-Usage: python isaac/analysis/full_gate.py > results_md/full_gate.md
+Usage: python isaac/analysis/full_gate.py [results dir] [--training-only] > results_md/full_gate.md
+  --training-only  count each trained model once: skip the teacher-forced re-evaluation ledgers (rep_*, tf_*) and the timing
+                   benchmark; this is the sample of Appendix B.5 (A'-family training runs; the weighing task has no relaxed gate).
+The normalisation-control ledgers (normctl, rep_normctl) are tabulated but never enter the totals.
 """
 import sys, os, json, glob, math
 from collections import defaultdict
 import numpy as np
-D = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(__file__), "..", "cluster_results", "results")
+TRAIN_ONLY = "--training-only" in sys.argv[1:]; _args = [a for a in sys.argv[1:] if not a.startswith("--")]
+D = _args[0] if _args else os.path.join(os.path.dirname(__file__), "..", "cluster_results", "results")
+CONTROL = ("normctl", "rep_normctl")
 TH = 0.9
 def gates(r):
     ph, p = r["phases"], r["per_t"]; SGam, SG, HC = p["S_Gam"], p["S_G"], p["H(C|O)"]
@@ -58,7 +63,8 @@ def cell(r):
 rows = defaultdict(lambda: defaultdict(list))
 for f in sorted(glob.glob(os.path.join(D, "*.jsonl"))):
     grid = os.path.basename(f)[:-6]
-    if grid.startswith(("smoke", "closedloop")) or grid in ("readout", "readoutb"): continue    # readout family: training-time ledger predates the nested-class visibility fix -> use tf_* / rep_*
+    if grid.startswith(("smoke", "closedloop")) or grid in ("readout", "readoutb"): continue
+    if TRAIN_ONLY and grid.startswith(("rep_", "tf_", "timing")): continue    # readout family: training-time ledger predates the nested-class visibility fix -> use tf_* / rep_*
     seen = {}
     for line in open(f):
         try: r = json.loads(line)
@@ -76,9 +82,9 @@ for grid in sorted(rows):
     print(f"\n## {grid}\n\n| dataset | learner | K | beta | N | seeds | relaxed gate | full gate | strict | H(C\\|O) gap1 (full-gate seeds) | gap2 | min_t S_Gamma gap1 of relaxed-gate seeds |\n|---|---|---|---|---|---|---|---|---|---|---|---|")
     for c in sorted(rows[grid], key=str):
         g = rows[grid][c]; n = len(g); o = sum(x["old"] for x in g); fu = sum(x["full"] for x in g); st = sum(x["strict"] for x in g); ok = [x for x in g if x["full"]]
-        tot["n"] += n; tot["old"] += o; tot["full"] += fu; tot["strict"] += st; tot["lost"] += sum(x["old"] and not x["full"] for x in g); tot["gained"] += sum(x["full"] and not x["old"] for x in g)
+        if not grid.startswith(CONTROL): tot["n"] += n; tot["old"] += o; tot["full"] += fu; tot["strict"] += st; tot["lost"] += sum(x["old"] and not x["full"] for x in g); tot["gained"] += sum(x["full"] and not x["old"] for x in g)   # (one statement: all increments guarded)
         th = (lambda k_: f" ({g[0][k_]:.2f})" if g[0][k_] not in (0.0, 1.0) or "H(Gam|O)" in str(k_) else "")
         r1 = f"{np.mean([x['HC_gap1'] for x in ok]):.2f}" + (f" ({g[0]['HGam_gap1']:.2f})" if g[0].get("has_theory") else "") if ok else "--"; r2 = f"{np.mean([x['HC_gap2'] for x in ok]):.2f}" + (f" ({g[0]['HGam_gap2']:.2f})" if g[0].get("has_theory") else "") if ok else "--"
         ms = [x["minS_gap1"] for x in g if x["old"]]; msr = f"{min(ms):.2f}..{max(ms):.2f}" if ms else "--"
         print(f"| {c[0]} | {c[1]} | {c[2]} | {c[3]} | {c[4]} | {n} | {o}/{n} | **{fu}/{n}** | {st}/{n} | {r1} | {r2} | {msr} |")
-print(f"\n## Totals\n\n{tot['n']} A'-family runs: relaxed gate {tot['old']}, full gate {tot['full']}, strict {tot['strict']}; pass the relaxed gate but fail the full gate: {tot['lost']}; pass full but not paper: {tot['gained']}.")
+print(f"\n## Totals ({'training runs only: rep_*/tf_*/timing skipped' if TRAIN_ONLY else 'all ledgers'}; normalisation-control ledgers excluded)\n\n{tot['n']} A'-family runs: relaxed gate {tot['old']}, full gate {tot['full']}, strict {tot['strict']}; pass the relaxed gate but fail the full gate: {tot['lost']}; pass full but not paper: {tot['gained']}.")

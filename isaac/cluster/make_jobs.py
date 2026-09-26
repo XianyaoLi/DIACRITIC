@@ -2,7 +2,7 @@
 Usage: python isaac/cluster/make_jobs.py <grid> > isaac/cluster/jobs_<grid>.txt   grids: smoke | fig3 | gap | tier | pI"""
 import sys, itertools
 grid = sys.argv[1]; J = []
-def add(ds, beta, lam, seed, variant, steps, batch, ntrain, tag, aux=0, refine="none", init="none", join=0, K=16, mik=0, mikd=0, symin=0, distill="none", noobs=0, dtgt="forecast", highw=1, dualk=0, duald=0, dstride=1, dsrc="teacher", fcsteps=3000, fccorr=0, dw=1, doff=0, fcstart="reveal"): J.append(f"{ds} {beta} {lam} {seed} {variant} {steps} {batch} {ntrain} {tag} {aux} {refine} {init} {join} {K} {mik} {mikd} {symin} {distill} {noobs} {dtgt} {highw} {dualk} {duald} {dstride} {dsrc} {fcsteps} {fccorr} {dw} {doff} {fcstart}")
+def add(ds, beta, lam, seed, variant, steps, batch, ntrain, tag, aux=0, refine="none", init="none", join=0, K=16, mik=0, mikd=0, symin=0, distill="none", noobs=0, dtgt="forecast", highw=1, dualk=0, duald=0, dstride=1, dsrc="teacher", fcsteps=3000, fccorr=0, dw=1, doff=0, fcstart="reveal", normfit="all"): J.append(f"{ds} {beta} {lam} {seed} {variant} {steps} {batch} {ntrain} {tag} {aux} {refine} {init} {join} {K} {mik} {mikd} {symin} {distill} {noobs} {dtgt} {highw} {dualk} {duald} {dstride} {dsrc} {fcsteps} {fccorr} {dw} {doff} {fcstart} {normfit}")
 S8 = range(8)
 if grid == "smoke":
     add("tier4_gap6", 0.002, 1, 0, "diacritic", 1000, 512, 448, "smoke")
@@ -253,6 +253,9 @@ elif grid == "frozen60":     # FROZEN generic configuration (random future offse
     # and NOT to be changed again: the three primary cells that had only been run with earlier schedules (gap 20 and M32 are in generic2).
     for ds, seed in itertools.product(["tier4_gap6", "tier4_gap10", "pI_M16"], S8):
         add(ds, 0.001, 0, seed, "diacritic", 10000, 512, 448, "frozen60", distill="self", dtgt="random", doff=0.6)
+elif grid == "normctl":     # normalisation control: the five frozen primary cells retrained with the observation/action statistics fit on the 448 training episodes only
+    for ds, seed in itertools.product(["tier4_gap6", "tier4_gap10", "tier4_gap20", "pI_M16", "pI_M32"], S8):
+        add(ds, 0.001, 0, seed, "diacritic", 10000, 512, 448, "normctl", distill="self", dtgt="random", doff=0.6, normfit="train")
 elif grid == "readoutK":     # where between the cardinality bound (K=8: 0/24) and K=16 (15/24) does the 3-bit code become learnable?  task-informed forecast, as in grid readoutb
     for K, M, seed in itertools.product([10, 12, 24], [32, 128, 512], S8):
         add(f"readoutb3_M{M}", 0.001, 0, seed, "diacritic", 10000, 512, 448, "readoutK", distill="self", K=K)

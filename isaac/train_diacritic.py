@@ -58,6 +58,7 @@ ap.add_argument("--distill_off", type=float, default=0.0, help="training-only su
 ap.add_argument("--fc_start", default="reveal", help="targeted forecast: supervise from the last identification step (reveal; default, as in the paper) | zero: from the first step of the episode -- no knowledge of WHEN the class becomes known; before that the forecaster's output is the conditional mean")
 ap.add_argument("--fc_J", type=int, default=0, help="generic targets (uniform | random): number of future offsets j = 1..J (0 = all, J = T-1)")
 ap.add_argument("--fc_steps", type=int, default=3000, help="training steps of the full-history forecaster (smaller = deliberately weak teacher)")
+ap.add_argument("--norm_fit", default="all", choices=["all", "train"], help="episodes used for the observation/action normalisation statistics: all recorded episodes (default; the paper's runs) or the training split only (control)")
 ap.add_argument("--fc_corrupt", type=float, default=0.0, help="teacher-dependence control: for this fraction of the training episodes the distillation target is the forecast of a training episode with a DIFFERENT behavioural class (consistently wrong forecast)")
 args = ap.parse_args()
 torch.manual_seed(args.seed); np.random.seed(args.seed)
@@ -84,8 +85,9 @@ if args.pixels:
     IM = torch.stack(IM).to(dev)                                                       # (E,T,3,r,r) uint8 on GPU
     LOW_IDX = [7, 17, 18] + list(range(19, 27))                                          # gripper, probe(2), phase one-hot(8)
     print(f"[pixels] images {tuple(IM.shape)} ({IM.numel()/1e6:.0f} MB uint8), low-dim channels {len(LOW_IDX)}", flush=True)
-o_mu, o_sd = O.reshape(-1, O.shape[-1]).mean(0), O.reshape(-1, O.shape[-1]).std(0) + 1e-6
-a_mu, a_sd = A.reshape(-1, A.shape[-1]).mean(0), A.reshape(-1, A.shape[-1]).std(0) + 1e-6
+_nfit = np.random.RandomState(0).permutation(E)[:args.n_train] if args.norm_fit == "train" else np.arange(E)   # same split as below
+o_mu, o_sd = O[_nfit].reshape(-1, O.shape[-1]).mean(0), O[_nfit].reshape(-1, O.shape[-1]).std(0) + 1e-6
+a_mu, a_sd = A[_nfit].reshape(-1, A.shape[-1]).mean(0), A[_nfit].reshape(-1, A.shape[-1]).std(0) + 1e-6
 On, An = ((O - o_mu) / o_sd).to(dev), ((A - a_mu) / a_sd).to(dev)
 if args.pixels:
     On_low = On[:, :, LOW_IDX].contiguous()

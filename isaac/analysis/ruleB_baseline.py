@@ -17,7 +17,7 @@ def gap2_ok(r):      # the memory that must support the PLACE decision: S_Gamma 
 fam = defaultdict(lambda: [0, 0, 0, 0]); per_grid = defaultdict(lambda: [0, 0, 0, 0])
 for f in sorted(glob.glob(os.path.join(RES, "*.jsonl"))):
     g = os.path.basename(f)[:-6]
-    if g.startswith(("smoke", "tf_", "rep_", "closedloop", "timing")) or g in ("leak", "readout", "readoutb", "readoutK", "weigh", "weigh2", "weigh3", "weighH8"): continue   # readout*: ledger predates the nested-visibility fix; weigh*: no place-step requirement
+    if g.startswith(("smoke", "tf_", "rep_", "closedloop", "timing", "normctl")) or g in ("leak", "readout", "readoutb", "readoutK", "weigh", "weigh2", "weigh3", "weighH8"): continue   # readout*: ledger predates the nested-visibility fix; weigh*: no place-step requirement
     seen = {}
     for l in open(f):
         try: r = json.loads(l)

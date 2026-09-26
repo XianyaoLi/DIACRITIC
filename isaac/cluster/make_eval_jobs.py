@@ -1,7 +1,9 @@
 """List models on the cluster that have no closed-loop evaluation yet and write eval job lines: '<models subdir> <model.pt> <env args>'.
-Run locally: python isaac/cluster/make_eval_jobs.py > isaac/cluster/jobs_eval_rest.txt   (queries cluster over ssh)"""
+Run locally: python isaac/cluster/make_eval_jobs.py > isaac/cluster/jobs_eval_rest.txt   (queries cluster over ssh)
+Models of the normalisation control (subdir normctl) share file names with the frozen runs; their evaluations live in eval_normctl/,
+so submit those lines as a separate array with EVALTAG=normctl (otherwise eval.slurm skips them as already evaluated)."""
 import subprocess, re, sys
-out = subprocess.run(["ssh", "-o", "BatchMode=yes", "cluster", 'cd $WORKSPACE && for d in models/*/; do for f in $d*.pt; do n=$(basename $f .pt); [ -f "eval/$n/closedloop_eval.jsonl" ] || echo "$(basename $d) $(basename $f)"; done; done'], capture_output=True, text=True).stdout
+out = subprocess.run(["ssh", "-o", "BatchMode=yes", "cluster", 'cd $WORKSPACE && for d in models/*/; do for f in $d*.pt; do n=$(basename $f .pt); ev=eval; [ "$(basename $d)" = normctl ] && ev=eval_normctl; [ -f "$ev/$n/closedloop_eval.jsonl" ] || echo "$(basename $d) $(basename $f)"; done; done'], capture_output=True, text=True).stdout
 n = 0
 for l in out.splitlines():
     sub, f = l.split()
